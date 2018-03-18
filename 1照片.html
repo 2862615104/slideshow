@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        ul {
+            list-style: none;
+        }
+        .box {
+            width: 730px;
+            height: 454px;
+            padding: 8px;
+            border: 1px solid green;
+            margin: 100px auto;
+        }
+        .inner {
+            position: relative;
+            overflow: hidden;
+            height: 454px;
+        }
+        #imglist {
+            width: 700%;
+            position: absolute;
+            left: 0;
+        }
+
+        li {
+            float: left;
+        }
+
+        .list {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            margin-left: -85px;
+        }
+
+        .list i {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #fff;
+            color: #333;
+            float: left;
+            font-style: normal;
+            line-height: 20px;
+            font-size: 14px;
+            text-align: center;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .list i:last-child {
+            margin-right: 0;
+        }
+
+        .list i.current {
+            background-color: skyblue;
+            color: #fff;
+        }
+        .arrow {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            margin-top: -30px;
+        }
+
+        .arrow-left, .arrow-right {
+            width: 30px;
+            height: 60px;
+            position: absolute;
+            font: 20px/60px "consolas";
+            color: #fff;
+            background-color: rgba(0, 0, 0, .3);
+            text-align: center;
+            cursor: pointer;
+        }
+        .arrow-right {
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="box" id="box">
+    <div class="inner" id="inner">
+        <ul id="imglist">
+            <li><a href="#"><img src="img/1.jpg" alt=""></a></li>
+            <li><a href="#"><img src="img/2.jpg" alt=""></a></li>
+            <li><a href="#"><img src="img/3.jpg" alt=""></a></li>
+            <li><a href="#"><img src="img/4.jpg" alt=""></a></li>
+            <li><a href="#"><img src="img/5.jpg" alt=""></a></li>
+            <li><a href="#"><img src="img/6.jpg" alt=""></a></li>
+            <li><a href="#"><img src="img/1.jpg" alt=""></a></li>
+        </ul>
+        <div class="list">
+            <i class="current">1</i>
+            <i>2</i>
+            <i>3</i>
+            <i>4</i>
+            <i>5</i>
+            <i>6</i>
+        </div>
+        <div class="arrow">
+            <span class="arrow-left">&lt;</span>
+            <span class="arrow-right">&gt;</span>
+        </div>
+    </div>
+</div>
+<script src="animate.js"></script>
+<script>
+    var box = document.getElementById("box")
+    var inner = document.getElementById("inner")
+    var ul = inner.children[0];
+    var list = inner.children[1].children;
+    var arrow = inner.children[2];
+    var arrowLeft = arrow.children[0];
+    var arrowRight = arrow.children[1];
+    var imgWidth = ul.children[0].offsetWidth;
+    var currentIndex = 0;
+    for (var i = 0; i < list.length; i++) {
+        list[i].index = i;
+        list[i].onmousemove = msCharIndentCount;
+    }
+    function msCharIndentCount() {
+        var taget = this.index * imgWidth * -1;
+        animate(ul, taget, 300)
+        for (var j = 0; j < list.length; j++) {
+            list[j].className = ""
+        }
+        this.className = "current";
+    }
+    //自动轮播实现
+    arrowLeft.onclick = function () {
+        if (currentIndex == 0) {
+            currentIndex = ul.children.length - 1;
+            ul.style.left = (ul.children.length - 1) * imgWidth * -1 + "px"
+        }
+        currentIndex--;
+        var target = currentIndex * imgWidth * -1;
+        animate(ul, target, 40)
+        for (var i = 0; i < list.length; i++) {
+            list[i].className = ""
+        }
+        list[currentIndex].className = "current"
+    }
+    arrowRight.onclick = function () {
+        moveRight()
+    }
+    //自动轮播效果其实和我们点击右边按钮的效果是一样一样的。用函数封装
+    function moveRight() {
+        if (currentIndex == ul.children.length - 1) {
+            currentIndex = 0;
+            ul.style.left=0;
+        }
+        currentIndex++;
+        var target = currentIndex * imgWidth * -1
+        animate(ul, target, 40)
+        for (var j = 0; j < list.length; j++) {
+            list[j].className = "";
+        }
+        if (currentIndex == ul.children.length-1) {
+            list[0].className = "current";
+        } else {
+            list[currentIndex].className = "current"
+        }
+    }
+    var time=setInterval(moveRight,4000)
+    box.onmouseover=function(){
+        clearInterval(time)
+    }
+    box.onmouseout=function(){
+       time= setInterval(moveRight,4000)
+    }
+</script>
